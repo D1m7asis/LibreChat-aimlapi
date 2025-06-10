@@ -231,6 +231,86 @@ const getOpenAIModels = async (opts) => {
   return await fetchOpenAIModels(opts, models);
 };
 
+/**
+ * Fetches models from the AI/ML API.
+ * Filters for chat completion models and optionally caches token configs.
+ * @async
+ * @function
+ * @param {object} opts - The options for fetching the models.
+ * @param {string} opts.user - The user ID to send to the API.
+ * @param {string} opts.apiKey - API key for the provider.
+ * @param {string} opts.baseURL - Base URL of the provider.
+ * @param {boolean} [opts.userIdQuery=false] - Include user ID as query param.
+ * @param {boolean} [opts.createTokenConfig=true] - Whether to save token config.
+ * @param {string} [opts.tokenKey] - Cache key for token configs.
+ * @param {string[]} [_models=[]] - Fallback models.
+ */
+const fetchAimlapiModels = async (
+  opts,
+  _models = [],
+) => {
+  let models = _models.slice() ?? [];
+  const { user, apiKey, baseURL, userIdQuery = false, createTokenConfig = true, tokenKey } = opts;
+
+  if (!apiKey || !baseURL) {
+    return models;
+  }
+
+  const modelsCache = getLogStores(CacheKeys.MODEL_QUERIES);
+  const cachedModels = await modelsCache.get(baseURL);
+  if (cachedModels) {
+    return cachedModels;
+  }
+
+  try {
+    const options = {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      timeout: 5000,
+    };
+    if (process.env.PROXY) {
+      options.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
+    }
+
+    const url = new URL(`${baseURL}/models`);
+    if (user && userIdQuery) {
+      url.searchParams.append('user', user);
+    }
+
+    const res = await axios.get(url.toString(), options);
+    /** @type {z.infer<typeof inputSchema>} */
+    const input = res.data;
+    const data = Array.isArray(input.data) ? input.data : [];
+    const filtered = data.filter((item) => item.type === 'chat_completion');
+
+    if (createTokenConfig && inputSchema.safeParse(input).success) {
+      const endpointTokenConfig = processModelData({ data: filtered });
+      const cache = getLogStores(CacheKeys.TOKEN_CONFIG);
+      await cache.set(tokenKey ?? 'aimlapi', endpointTokenConfig);
+    }
+
+    models = filtered.map((item) => item.id);
+  } catch (error) {
+    logAxiosError({ message: 'Failed to fetch models from AI/ML API', error });
+  }
+
+  if (models.length === 0) {
+    return _models;
+  }
+
+  await modelsCache.set(baseURL, models);
+  return models;
+};
+
+/**
+ * Retrieves models for the AI/ML API provider.
+ * @async
+ * @function
+ * @param {object} opts - Options including user, apiKey and baseURL.
+ */
+const getAimlapiModels = async (opts = {}) => {
+  return await fetchAimlapiModels(opts, []);
+};
+
 const getChatGPTBrowserModels = () => {
   let models = ['text-davinci-002-render-sha', 'gpt-4'];
   if (process.env.CHATGPT_MODELS) {
@@ -327,8 +407,10 @@ const getBedrockModels = () => {
 
 module.exports = {
   fetchModels,
+  fetchAimlapiModels,
   splitAndTrim,
   getOpenAIModels,
+  getAimlapiModels,
   getBedrockModels,
   getChatGPTBrowserModels,
   getAnthropicModels,

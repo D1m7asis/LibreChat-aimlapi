@@ -259,6 +259,18 @@ endpoints:
       dropParams: ['stop']
       modelDisplayLabel: 'OpenRouter'
 
+    # AI/ML API Example
+    - name: 'AI/ML API'
+      apiKey: '${AIMLAPI_KEY}'
+      baseURL: 'https://api.aimlapi.com/v1'
+      models:
+        default: ['gpt-4o']
+        fetch: true
+      titleConvo: true
+      titleModel: 'gpt-4o'
+      dropParams: ['stop']
+      modelDisplayLabel: 'AI/ML API'
+
     # Portkey AI Example
     - name: "Portkey"
       apiKey: "dummy"

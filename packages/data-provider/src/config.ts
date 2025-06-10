@@ -727,6 +727,7 @@ export enum KnownEndpoints {
   mlx = 'mlx',
   ollama = 'ollama',
   openrouter = 'openrouter',
+  aimlapi = 'aimlapi',
   perplexity = 'perplexity',
   shuttleai = 'shuttleai',
   'together.ai' = 'together.ai',
@@ -766,6 +767,7 @@ export const alternateName = {
   [EModelEndpoint.bedrock]: 'AWS Bedrock',
   [KnownEndpoints.ollama]: 'Ollama',
   [KnownEndpoints.deepseek]: 'DeepSeek',
+  [KnownEndpoints.aimlapi]: 'AI/ML API',
   [KnownEndpoints.xai]: 'xAI',
 };
 

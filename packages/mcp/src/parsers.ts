@@ -4,6 +4,7 @@ const RECOGNIZED_PROVIDERS = new Set([
   'anthropic',
   'openai',
   'openrouter',
+  'aimlapi',
   'xai',
   'deepseek',
   'ollama',
