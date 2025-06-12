@@ -5,6 +5,7 @@ const {
   getGoogleModels,
   getBedrockModels,
   getAnthropicModels,
+  getAimlapiModels,
 } = require('~/server/services/ModelService');
 const { logger } = require('~/config');
 
@@ -25,6 +26,7 @@ async function loadDefaultModels(req) {
       azureAssistants,
       google,
       bedrock,
+      aimlapi,
     ] = await Promise.all([
       getOpenAIModels({ user: req.user.id }).catch((error) => {
         logger.error('Error fetching OpenAI models:', error);
@@ -60,6 +62,10 @@ async function loadDefaultModels(req) {
         logger.error('Error getting Bedrock models:', error);
         return [];
       }),
+      Promise.resolve(getAimlapiModels()).catch((error) => {
+        logger.error('Error getting AI/ML API models:', error);
+        return [];
+      }),
     ]);
 
     return {
@@ -72,6 +78,7 @@ async function loadDefaultModels(req) {
       [EModelEndpoint.assistants]: assistants,
       [EModelEndpoint.azureAssistants]: azureAssistants,
       [EModelEndpoint.bedrock]: bedrock,
+      [EModelEndpoint.aimlapi]: aimlapi,
     };
   } catch (error) {
     logger.error('Error fetching default models:', error);

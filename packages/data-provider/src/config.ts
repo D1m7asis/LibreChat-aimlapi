@@ -697,6 +697,7 @@ export const configSchema = z.object({
       [EModelEndpoint.agents]: agentsEndpointSChema.optional(),
       [EModelEndpoint.custom]: z.array(endpointSchema.partial()).optional(),
       [EModelEndpoint.bedrock]: baseEndpointSchema.optional(),
+      [EModelEndpoint.aimlapi]: baseEndpointSchema.optional(),
     })
     .strict()
     .refine((data) => Object.keys(data).length > 0, {
@@ -751,6 +752,7 @@ export const defaultEndpoints: EModelEndpoint[] = [
   EModelEndpoint.anthropic,
   EModelEndpoint.custom,
   EModelEndpoint.bedrock,
+  EModelEndpoint.aimlapi,
 ];
 
 export const alternateName = {
@@ -911,6 +913,7 @@ export const EndpointURLs: { [key in EModelEndpoint]: string } = {
   [EModelEndpoint.assistants]: '/api/assistants/v2/chat',
   [EModelEndpoint.agents]: `/api/${EModelEndpoint.agents}/chat`,
   [EModelEndpoint.bedrock]: `/api/${EModelEndpoint.bedrock}/chat`,
+  [EModelEndpoint.aimlapi]: `/api/${EModelEndpoint.aimlapi}/chat`,
 };
 
 export const modularEndpoints = new Set<EModelEndpoint | string>([

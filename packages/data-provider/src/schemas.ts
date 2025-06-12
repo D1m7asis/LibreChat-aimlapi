@@ -26,6 +26,7 @@ export enum EModelEndpoint {
   agents = 'agents',
   custom = 'custom',
   bedrock = 'bedrock',
+  aimlapi = 'aimlapi',
   /** @deprecated */
   chatGPTBrowser = 'chatGPTBrowser',
   /** @deprecated */
@@ -1058,6 +1059,30 @@ export const compactGoogleSchema = googleBaseSchema
     return removeNullishValues(newObj);
   })
   .catch(() => ({}));
+
+export const aimlapiBaseSchema = tConversationSchema.pick({
+  model: true,
+  modelLabel: true,
+  promptPrefix: true,
+  temperature: true,
+  maxOutputTokens: true,
+  topP: true,
+  topK: true,
+  resendFiles: true,
+  promptCache: true,
+  thinking: true,
+  thinkingBudget: true,
+  artifacts: true,
+  iconURL: true,
+  greeting: true,
+  spec: true,
+  maxContextTokens: true,
+});
+
+export const aimlapiSchema = aimlapiBaseSchema
+  .transform((obj) => removeNullishValues(obj))
+  .catch(() => ({}));
+
 
 export const anthropicBaseSchema = tConversationSchema.pick({
   model: true,

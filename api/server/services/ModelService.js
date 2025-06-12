@@ -75,6 +75,11 @@ const fetchModels = async ({
         'x-api-key': apiKey,
         'anthropic-version': process.env.ANTHROPIC_VERSION || '2023-06-01',
       };
+    } else if (name === EModelEndpoint.aimlapi) {
+      options.headers = {
+        'X-Title': 'LibreChat',
+      };
+      options.headers.Authorization = `Bearer ${apiKey}`;
     } else {
       options.headers.Authorization = `Bearer ${apiKey}`;
     }
@@ -249,6 +254,7 @@ const fetchAimlapiModels = async (
   opts,
   _models = [],
 ) => {
+  logAxiosError({ message: 'Fetching models from AI/ML API', error: null });
   let models = _models.slice() ?? [];
   const { user, apiKey, baseURL, userIdQuery = false, createTokenConfig = true, tokenKey } = opts;
 

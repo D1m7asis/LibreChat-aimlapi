@@ -11,6 +11,7 @@ import {
   anthropicSchema,
   assistantSchema,
   gptPluginsSchema,
+  aimlapiSchema,
   // agentsSchema,
   compactAgentsSchema,
   compactGoogleSchema,
@@ -28,7 +29,8 @@ type EndpointSchema =
   | typeof gptPluginsSchema
   | typeof assistantSchema
   | typeof compactAgentsSchema
-  | typeof bedrockInputSchema;
+  | typeof bedrockInputSchema
+  | typeof aimlapiSchema;
 
 export type EndpointSchemaKey = Exclude<EModelEndpoint, EModelEndpoint.chatGPTBrowser>;
 
@@ -43,6 +45,7 @@ const endpointSchemas: Record<EndpointSchemaKey, EndpointSchema> = {
   [EModelEndpoint.azureAssistants]: assistantSchema,
   [EModelEndpoint.agents]: compactAgentsSchema,
   [EModelEndpoint.bedrock]: bedrockInputSchema,
+  [EModelEndpoint.aimlapi]: aimlapiSchema,
 };
 
 // const schemaCreators: Record<EModelEndpoint, (customSchema: DefaultSchemaValues) => EndpointSchema> = {
@@ -328,6 +331,7 @@ const compactEndpointSchemas: Record<EndpointSchemaKey, CompactEndpointSchema> =
   [EModelEndpoint.bedrock]: bedrockInputSchema,
   [EModelEndpoint.anthropic]: anthropicSchema,
   [EModelEndpoint.gptPlugins]: compactPluginsSchema,
+  [EModelEndpoint.aimlapi]: aimlapiSchema,
 };
 
 export const parseCompactConvo = ({
